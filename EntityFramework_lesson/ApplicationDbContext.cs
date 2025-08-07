@@ -5,12 +5,6 @@ namespace EntityFramework_lesson;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext()
-    {
-        Database.EnsureDeleted();
-        Database.EnsureCreated();
-    }
-
     public DbSet<Phone> Phones { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
