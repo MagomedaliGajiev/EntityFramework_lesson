@@ -6,14 +6,27 @@ public class Program
 {
     public static void Main()
     {
-        var phone = new Phone()
-        {
-            Name = "Xiaomi Poco F4",
-            Price = 25000
-        };
-
         using var dbContext = new ApplicationDbContext();
-        dbContext.Phones.Add(phone);
-        dbContext.SaveChanges();
+
+        using var transaction = dbContext.Database.BeginTransaction();
+
+        try
+        {
+            var phoneService = new PhoneService(dbContext);
+
+            // Вызываем методы, которые выполняют операции с базой данных
+            phoneService.AddPhones();
+            phoneService.UpdatePhone();
+
+            // Фиксируем все изменения вместе
+            transaction.Commit();
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            // Откат всех изменений, если что-то пошло не так
+            transaction.Rollback();
+            throw;
+        }
     }
 }
